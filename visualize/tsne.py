@@ -37,4 +37,4 @@ def plot_tsne(features, labels, class_names=None, title="t-SNE Projection", save
     if save_path:
         plt.savefig(save_path, bbox_inches='tight')
         print(f"Saved t-SNE plot to {save_path}")
-    plt.show()
+        plt.close()

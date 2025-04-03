@@ -1,9 +1,6 @@
-# decision_tree_plot.py
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.tree import plot_tree
-
 
 def plot_decision_tree(model, feature_names=None, class_names=None, title="Decision Tree Visualization", save_path=None):
     """
@@ -14,7 +11,7 @@ def plot_decision_tree(model, feature_names=None, class_names=None, title="Decis
         feature_names (list): Optional list of feature names (e.g. PCA or visual descriptors)
         class_names (list): Optional list of class label names
         title (str): Title of the plot
-        save_path (str): Optional file path to save the visualization
+        save_path (str): File path to save the visualization (SVG or PNG recommended)
     """
     plt.figure(figsize=(25, 15))
     plot_tree(
@@ -27,10 +24,12 @@ def plot_decision_tree(model, feature_names=None, class_names=None, title="Decis
         fontsize=10
     )
     plt.title(title, fontsize=16)
+    
     if save_path:
         plt.savefig(save_path, format="svg", bbox_inches="tight")
         print(f"Saved decision tree visualization to {save_path}")
-    plt.show()
+    
+    plt.close()  # Don't display the window
 
 
 def get_used_features(tree_model):

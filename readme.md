@@ -59,18 +59,6 @@ project/
 
 ---
 
-## 🧪 Setup
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-(Or use Conda for isolated environments.)
-
----
-
 ## ▶️ Usage
 
 Run the full pipeline:
