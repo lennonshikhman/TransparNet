@@ -1,0 +1,6 @@
+# Ignore downloaded Imagenette dataset
+imagenette2-320/
+imagenette2-320.tgz
+
+# Ignore all outputs
+outputs/
