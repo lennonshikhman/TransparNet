@@ -38,12 +38,14 @@ def train_decision_tree(features, teacher_preds):
 
 
 def evaluate_student(student_model, features_test, labels_test, teacher_preds_test):
-    """
-    Computes and prints student accuracy and fidelity.
-    """
     student_preds = student_model.predict(features_test)
     student_acc = accuracy_score(labels_test, student_preds) * 100
     fidelity = accuracy_score(teacher_preds_test, student_preds) * 100
+    teacher_acc = accuracy_score(labels_test, teacher_preds_test) * 100
+
+    print(f"Teacher Accuracy on Test Set: {teacher_acc:.2f}%")
     print(f"Student Accuracy on Test Set: {student_acc:.2f}%")
     print(f"Fidelity to Teacher Predictions: {fidelity:.2f}%")
-    return student_preds, student_acc, fidelity
+
+    return student_preds, student_acc, fidelity, teacher_acc
+

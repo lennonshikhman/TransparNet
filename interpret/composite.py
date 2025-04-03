@@ -76,4 +76,5 @@ def plot_composite_grid(
     if save_path:
         plt.savefig(save_path, bbox_inches='tight')
         print(f"Saved composite visualization to {save_path}")
+        plt.close()
     plt.show()

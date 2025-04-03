@@ -10,6 +10,12 @@ from visualize.confusion import plot_confusion_matrix, compute_kappa
 from visualize.tsne import plot_tsne
 from utils.helpers import format_elapsed_time
 from config import device, IMAGENETTE_CLASSES, TREE_VISUALIZATION_PATH
+from analyze.misclassifications import get_misclassified_indices, save_misclassified_summary, visualize_misclassifications
+from analyze.cluster_errors import tsne_cluster_misclassifications
+from interpret.gradcam import compute_gradcam
+from interpret.guided_backprop import compute_guided_backprop
+from interpret.peek import compute_peek_map, compute_peek_overlay
+from interpret.composite import plot_composite_grid
 import time
 import sys
 import os
@@ -47,7 +53,10 @@ def main():
     # 5. Evaluation
     print("\n>>> Evaluating student model...")
     y_true_test = [label for _, label in dataset_test]
-    y_pred_test, student_acc, fidelity = evaluate_student(student, feats_test_pca, y_true_test, teacher_preds_test)
+    y_pred_test, student_acc, fidelity, teacher_acc = evaluate_student(
+        student, feats_test_pca, y_true_test, teacher_preds_test
+    )
+
 
     print("\n>>> Confusion Matrix and Kappa Score")
     plot_confusion_matrix(y_true_test, y_pred_test, class_names=IMAGENETTE_CLASSES)
@@ -63,6 +72,32 @@ def main():
     # 7. t-SNE
     print("\n>>> Plotting t-SNE projection of features...")
     plot_tsne(feats_test_pca, y_true_test, class_names=IMAGENETTE_CLASSES)
+
+    # 8. Misclassification Analysis
+    print("\n>>> Analyzing misclassifications...")
+    misclassified_indices = get_misclassified_indices(teacher_preds_test, y_true_test)
+    save_misclassified_summary(misclassified_indices, y_true_test, teacher_preds_test, logits_test, "outputs/misclassified_summary.json")
+
+    # Required layers for interpretability
+    pre_layer4 = torch.nn.Sequential(*list(teacher.children())[:7])
+    spatial_extractor = teacher.layer4
+
+    visualize_misclassifications(
+        model=teacher,
+        dataset=dataset_test,
+        misclassified_indices=misclassified_indices,
+        logits=logits_test,
+        output_dir="outputs/misclassified_viz",
+        class_names=IMAGENETTE_CLASSES,
+        extractor=extractor,
+        spatial_extractor=spatial_extractor,
+        pre_layer4=pre_layer4,
+        device=device
+    )
+
+    # 9. Misclassification Clustering
+    print("\n>>> Clustering misclassifications with t-SNE...")
+    tsne_cluster_misclassifications(feats_test, misclassified_indices, y_true_test)
 
     print("\n✅ Pipeline complete. Total time:", format_elapsed_time(time.time() - total_start))
 

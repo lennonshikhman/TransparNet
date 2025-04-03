@@ -2,6 +2,7 @@
 
 import os
 import torch
+import numpy as np
 from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -17,15 +18,15 @@ NUM_CLASSES = 10
 NUM_WORKERS = 0
 
 # Training config
-NUM_EPOCHS = 20
-WARMUP_EPOCHS = 5
+NUM_EPOCHS = 12
+WARMUP_EPOCHS = np.round(0.25 * NUM_EPOCHS)
 INITIAL_LR = 0.01
 LABEL_SMOOTHING = 0.05
 WEIGHT_DECAY = 5e-4
 MOMENTUM = 0.9
 
 # PCA config
-PCA_VARIANCE_PERCENT = 0.8
+PCA_VARIANCE_PERCENT = 0.75
 
 # Dataset URLs and paths
 IMAGENETTE_URL = "https://s3.amazonaws.com/fast-ai-imageclas/imagenette2-320.tgz"

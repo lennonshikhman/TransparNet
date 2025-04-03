@@ -41,23 +41,28 @@ def compute_peek_map(spatial_maps):
 
 def compute_peek_overlay(original_img, peek_map, alpha=0.5):
     """
-    Overlays a PEEK entropy map on top of the original image.
-    Args:
-        original_img (np.ndarray): (H, W, 3) RGB image, values in [0, 1] or [0, 255]
-        peek_map (np.ndarray): (H, W) entropy heatmap, float in [0, 1]
-        alpha (float): Blend factor for overlay
-    Returns:
-        np.ndarray: Overlay image in [0, 1]
+    Overlays a heatmap on the original image. Assumes:
+    - original_img: (H, W, 3) normalized to [0, 1]
+    - peek_map: (H', W') or (H', W', 3)
     """
-    if original_img.max() > 1.0:
-        original_img = original_img / 255.0
+    import cv2
 
-    peek_uint8 = (peek_map * 255).astype(np.uint8)
-    heatmap = cv2.applyColorMap(peek_uint8, cv2.COLORMAP_JET)
-    heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB) / 255.0
+    # Ensure peek_map is 2D before applying colormap
+    if peek_map.ndim == 2:
+        peek_map = (peek_map * 255).astype(np.uint8)
+        heatmap = cv2.applyColorMap(peek_map, cv2.COLORMAP_JET)
+        heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
+        heatmap = heatmap.astype(np.float32) / 255.0
+    else:
+        heatmap = peek_map  # Already colored and normalized
 
+    # Resize to match original image size
+    heatmap = cv2.resize(heatmap, (original_img.shape[1], original_img.shape[0]))
+
+    # Blend
     overlay = np.clip(original_img * (1 - alpha) + heatmap * alpha, 0, 1)
     return overlay
+
 
 
 def compute_peek_hw_map(feature_tensor, target_size):
