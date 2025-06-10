@@ -1,6 +1,6 @@
-# TransparNet
+# ViNCE (Visual Interpretability for Neural Classifier Explainability) 
 
-**TransparNet** is a neural network distillation and interpretability pipeline that compresses a deep CNN into a lightweight, interpretable decision tree, while retaining high accuracy and producing rich visual explanations of model behavior.
+**ViNCE** is a neural network distillation and interpretability pipeline that compresses a deep CNN into a lightweight, interpretable decision tree, while retaining high accuracy and producing rich visual explanations of model behavior.
 
 ---
 
